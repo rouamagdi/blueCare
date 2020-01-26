@@ -4,7 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loginn/style/theme.dart' as Theme;
 import 'package:loginn/utils/bubble_indication_painter.dart';
 import 'package:loginn/ui/signup_page.dart';
-
+import 'package:http/http.dart'; //to use http request
+import 'dart:convert'; 
+import 'package:loginn/ui/MainPage.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loginn/utils/validation.dart';
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
 
@@ -13,8 +17,14 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin,Validation {
+String name = ''; //expected: five letters or more
+  String email = ''; //expected: @
+  String password = ''; //expected: five digits or more
+  String token = ''; //token validator
 
+
+   final String loginUrl = 'http://192.168.56.1:8080/signin';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -24,28 +34,26 @@ class _LoginState extends State<Login>
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeName = FocusNode();
 
-  TextEditingController loginEmailController = new TextEditingController();
-  TextEditingController loginPasswordController = new TextEditingController();
-
+    TextEditingController loginEmailController = new TextEditingController();
+   TextEditingController loginPasswordController = new TextEditingController();
   bool _obscureTextLogin = true;
-  bool _obscureTextSignup = true;
+ 
   bool _obscureTextSignupConfirm = true;
 
-  TextEditingController signupEmailController = new TextEditingController();
-  TextEditingController signupNameController = new TextEditingController();
-  TextEditingController signupPasswordController = new TextEditingController();
-  TextEditingController signupConfirmPasswordController =
-      new TextEditingController();
+  
 
   PageController _pageController;
+final formKey = GlobalKey<FormState>();
 
   Color left = Colors.black;
   Color right = Colors.white;
 
   @override
   Widget build(BuildContext context) {
+     ScreenUtil.init(context,
+        width: 1080, height: 2160, allowFontScaling: false);
     return new Scaffold(
-      key: _scaffoldKey,
+     backgroundColor: Colors.white,
       body: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (overscroll) {
           overscroll.disallowGlow();
@@ -56,17 +64,7 @@ class _LoginState extends State<Login>
                 height: MediaQuery.of(context).size.height >= 775.0
                     ? MediaQuery.of(context).size.height
                     : 775.0,
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
-                      colors: [
-                        Theme.Colors.loginGradientStart,
-                        Theme.Colors.loginGradientEnd
-                      ],
-                      begin: const FractionalOffset(0.0, 0.0),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
+              
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
@@ -76,7 +74,8 @@ class _LoginState extends State<Login>
                           width: 250.0,
                           height: 191.0,
                           fit: BoxFit.fill,
-                          image: new AssetImage('assets/img/1.png')),
+                          image: new AssetImage('assets/img/logo.png')
+                          ),//
                     ),
                    
                     Expanded(
@@ -154,7 +153,9 @@ class _LoginState extends State<Login>
  
 
   Widget _buildSignIn(BuildContext context) {
-    return Container(
+    return new Scaffold(
+      backgroundColor: Colors.white,
+     body: Container(
       padding: EdgeInsets.only(top: 23.0),
       child: Column(
         children: <Widget>[
@@ -162,29 +163,38 @@ class _LoginState extends State<Login>
             alignment: Alignment.topCenter,
             overflow: Overflow.visible,
             children: <Widget>[
+              
               Card(
                 elevation: 2.0,
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
+                
                 child: Container(
                   width: 300.0,
                   height: 190.0,
-                  child: Column(
+                  
+                  child: new Form(
+                  key: formKey,
+                  child: new Column(
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                         child: TextField(
                           focusNode: myFocusNodeEmailLogin,
+                          
                           controller: loginEmailController,
                           keyboardType: TextInputType.emailAddress,
+                          
+
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
                               fontSize: 16.0,
                               color: Colors.black),
                           decoration: InputDecoration(
+                            
                             border: InputBorder.none,
                             icon: Icon(
                               FontAwesomeIcons.envelope,
@@ -237,6 +247,7 @@ class _LoginState extends State<Login>
                         ),
                       ),
                     ],
+                    ),
                   ),
                 ),
               ),
@@ -246,35 +257,23 @@ class _LoginState extends State<Login>
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: Theme.Colors.loginGradientStart,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                    BoxShadow(
                       color: Theme.Colors.loginGradientEnd,
                       offset: Offset(1.0, 6.0),
                       blurRadius: 20.0,
                     ),
+                   
                   ],
-                  gradient: new LinearGradient(
-                      colors: [
-                        Theme.Colors.loginGradientEnd,
-                        Theme.Colors.loginGradientStart
-                      ],
-                      begin: const FractionalOffset(0.2, 0.2),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
+                  
                 ),
                 child: MaterialButton(
                     highlightColor: Colors.transparent,
-                    splashColor: Theme.Colors.loginGradientEnd,
+                    color: Color(0xFF304D6D),
                     //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 42.0),
                       child: Text(
-                        "LOGIN",
+                        "Login",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 25.0,
@@ -282,7 +281,8 @@ class _LoginState extends State<Login>
                       ),
                     ),
                     onPressed: () =>
-                        showInSnackBar("Login button pressed")),
+                        loginPostData(context)
+                        ),
               ),
             ],
           ),
@@ -293,8 +293,8 @@ class _LoginState extends State<Login>
                 child: Text(
                   "Forgot Password?",
                   style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
+                      
+                      color:  Color(0xFF4D70A6),
                       fontSize: 16.0,
                       fontFamily: "WorkSansMedium"),
                 )),
@@ -324,7 +324,7 @@ class _LoginState extends State<Login>
                   child: Text(
                     "Or",
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.grey,
                         fontSize: 16.0,
                         fontFamily: "WorkSansMedium"),
                   ),
@@ -334,7 +334,7 @@ class _LoginState extends State<Login>
                     gradient: new LinearGradient(
                         colors: [
                           Colors.white,
-                          Colors.white10,
+                          Colors.white,
                         ],
                         begin: const FractionalOffset(0.0, 0.0),
                         end: const FractionalOffset(1.0, 1.0),
@@ -356,24 +356,59 @@ class _LoginState extends State<Login>
                 child: FlatButton(
                 onPressed: () {Navigator.pushReplacement(context,
         new MaterialPageRoute(builder: (BuildContext context) => LoginPage()));},
-                child: Text(
-                  "create new aacount",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
-                      fontSize: 16.0,
-                      fontFamily: "WorkSansMedium"),
+                child:RichText(
+                        text: TextSpan(children: <TextSpan>[
+                          TextSpan(
+                              text: "Don't have an account?",
+                              style: TextStyle(color: Colors.grey)),
+                          TextSpan(
+                              text: " Sign Up",
+                              style: TextStyle(color: Color(0xFF4D70A6))),
+                        ]),
                 )),
               ),
             ],
           ),
         ],
       ),
-    );
+    ),);
   }
 
 
-
+void loginPostData(BuildContext context) async {
+    //post body
+    dynamic bodyToSend = {'email': loginEmailController.text, 'password': loginPasswordController.text};
+    dynamic headers = {'Content-Type': 'application/json; charset=utf-8'};
+    var body = json.encode(bodyToSend);
+    print(body);
+    //request
+    var response = await post(loginUrl, body: body, headers: headers);
+    var state = json.decode(response.body);
+    //token
+    var givenToken = state['token'];
+    token = givenToken;
+    print(token);
+    if(response.statusCode == 200) {
+      //Navigator.of(context).pushNamed('/secondScreen');
+      var route = new MaterialPageRoute(
+        builder: (BuildContext context) =>
+          new MainPage(),
+      );
+      Navigator.of(context).push(route);
+    } else {
+      //error message
+      var error = state['error'];
+      final snackBar = SnackBar(
+        content: Text('E-mail ou senha incorretos'),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {},
+        ),
+      );
+      Scaffold.of(context).showSnackBar(snackBar);
+      print(error.toString());
+    }
+  }
   void _onSignInButtonPress() {
     _pageController.animateToPage(0,
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);

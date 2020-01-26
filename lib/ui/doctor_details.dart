@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'MainPage.dart';
 
 class DoctorDeitals extends StatefulWidget {
@@ -9,9 +10,32 @@ class DoctorDeitals extends StatefulWidget {
 
 class _DoctorDeitalsState extends State<DoctorDeitals> {
   bool _status = true;
-  
+   File galleryFile;
+
+//save the result of camera file
+  File cameraFile;
   @override
   Widget build(BuildContext context) {
+    imageSelectorGallery() async {
+      galleryFile = await ImagePicker.pickImage(
+        source: ImageSource.gallery,
+        // maxHeight: 50.0,
+        // maxWidth: 50.0,
+      );
+      print("You selected gallery image : " + galleryFile.path);
+      setState(() {});
+    }
+
+    //display image selected from camera
+    imageSelectorCamera() async {
+      cameraFile = await ImagePicker.pickImage(
+        source: ImageSource.camera,
+        //maxHeight: 50.0,
+        //maxWidth: 50.0,
+      );
+      print("You selected camera image : " + cameraFile.path);
+      setState(() {});
+    }
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -25,36 +49,74 @@ class _DoctorDeitalsState extends State<DoctorDeitals> {
       body: Column(
         children: <Widget>[
           Container(
-            height: 250,
-            child: Row(
+            height: 150,
+            child:  new Column(
               children: <Widget>[
-                Container(
-                  height: 150,
-                  width: 150,
-                  padding: EdgeInsets.all(10),
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage("assets/bg.jpeg"),
-                  ),
+               new Container(
+                height: 150.0,
+                color: Colors.white,
+                child: new Column(
+                  children: <Widget>[
+                   
+                    Padding(
+                      padding: EdgeInsets.only(top: 5.0),
+                      child: new Stack(fit: StackFit.loose, children: <Widget>[
+                        new Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            new Container(
+                                width: 100.0,
+                                height: 100.0,
+                                decoration: new BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: new DecorationImage(
+                                    image: new ExactAssetImage(
+                                        'assets/img/user.png'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                )),
+                          ],
+                        ),
+                        Padding(
+                            padding: EdgeInsets.only(top: 75.0, right: 90.0),
+                            child: new Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                new CircleAvatar(
+                                  backgroundColor: Color(0xFF005ab3),
+                                  radius: 19.0,
+                                  child: new IconButton(
+                                     icon: Icon(Icons.camera_alt),
+                                    color: Colors.white,
+                                     onPressed: imageSelectorGallery,
+                                  ),
+                                )
+                              ],
+                            )),
+                      ]),
+                    )
+                  ],
                 ),
+              ),
+              
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
+                  child: Container(
+              padding: EdgeInsets.all(20),
+                   
+                    child: ListView(
+                     
                                 children: <Widget>[
-                                  _status ? _getEditIcon() : new Container(),
-                                ],
-                              ),
+                                
+                                
+                              
                       new Flexible(
                                 child: new TextField(
                          decoration: new InputDecoration.collapsed(
                           
                                     hintText: "Dr.Ahmed Tibin",
                                   ),
-                                  enabled: !_status,
-                                  autofocus: !_status,
+                                 
 
                                 ),
                               ),
@@ -106,41 +168,10 @@ class _DoctorDeitalsState extends State<DoctorDeitals> {
                       ),
                       SizedBox(height: 10,),
 
-                      Row(
-                        children: <Widget>[
-                          MaterialButton(
-                            onPressed: (){
-                              Navigator.pushReplacement(context,
-                                  new MaterialPageRoute(builder: (BuildContext context) => MainPage()));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              child: Text("Consult"),
-                            ),
-                            textColor: Colors.grey,
-                           
-                            //height: 30,
-                            //minWidth: MediaQuery.of(context).size.width-40,
-                          ),
-                          SizedBox(width: 10,),
-                          MaterialButton(
-                            onPressed: (){
-                              Navigator.pushReplacement(context,
-                                  new MaterialPageRoute(builder: (BuildContext context) => MainPage()));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(5),
-                              child: Text("Message"),
-                            ),
-                            textColor: Colors.grey,
-                            
-                            //minWidth: MediaQuery.of(context).size.width-40,
-                          ),
-                        ],
-                      )
-                    ],
+                      
+                                ],
                   ),
-                )
+                ),)
               ],
             ),
           ),
@@ -232,19 +263,7 @@ class _DoctorDeitalsState extends State<DoctorDeitals> {
             )
           ),
 
-          MaterialButton(
-            onPressed: (){
-              Navigator.pushReplacement(context,
-                  new MaterialPageRoute(builder: (BuildContext context) => MainPage()));
-            },
-            child: Container(
-              padding: EdgeInsets.all(15),
-              child: Text("BOOK An APPOINTMENT"),
-            ),
-            textColor: Colors.grey,
-            
-            minWidth: MediaQuery.of(context).size.width-40,
-          ),
+          
 
           SizedBox(height: 20,)
 
@@ -252,76 +271,9 @@ class _DoctorDeitalsState extends State<DoctorDeitals> {
       )
     );
   }
-  Widget _getActionButtons() {
-    return Padding(
-      padding: EdgeInsets.only(left: 25.0, right: 25.0, top: 45.0),
-      child: new Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Container(
-                  child: new RaisedButton(
-                child: new Text("Save"),
-                textColor: Colors.white,
-                color: Colors.green,
-                onPressed: () {
-                  setState(() {
-                    _status = true;
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  });
-                },
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(20.0)),
-              )),
-            ),
-            flex: 2,
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: Container(
-                  child: new RaisedButton(
-                child: new Text("Cancel"),
-                textColor: Colors.white,
-                color: Color(0xFF005ab3),
-                onPressed: () {
-                  setState(() {
-                    _status = true;
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  });
-                },
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(20.0)),
-              )),
-            ),
-            flex: 2,
-          ),
-        ],
-      ),
-    );
-  }
+  
 
-  Widget _getEditIcon() {
-    return new GestureDetector(
-      child: new CircleAvatar(
-        backgroundColor: Color(0xFF005ab3),
-        radius: 14.0,
-        child: new Icon(
-          Icons.edit,
-          color: Colors.white,
-          size: 16.0,
-        ),
-      ),
-      onTap: () {
-        setState(() {
-          _status = false;
-        });
-      },
-    );
-  }
+  
 }
 
 

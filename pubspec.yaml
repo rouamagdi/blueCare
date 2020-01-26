@@ -26,9 +26,24 @@ dependencies:
   cupertino_icons: ^0.1.2
   image_picker:
   intl: ^0.15.7
-  intl_translation: ^0.17.0
+  http:
+
+  intl_translation: ^0.17.9
+  google_maps_flutter: ^0.5.21
+  json_serializable: ^2.0.2
   scoped_model: 
+  geolocator: ^5.1.5
+  android_intent: ^0.3.0
+  provider: ^3.1.0
+  
+  stack_trace: ^1.9.3
+  flutter_google_places: ^0.1.4
+  flutter_screenutil : ^1.0.2
+  location: ^1.4.1  
 dev_dependencies:
+  pedantic: ^1.4.0
+
+  build_runner: ^1.2.7
   flutter_test:
     sdk: flutter
   font_awesome_flutter: ^8.0.1

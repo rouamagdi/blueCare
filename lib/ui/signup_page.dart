@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loginn/style/theme.dart' as Theme;
@@ -6,7 +7,9 @@ import 'package:loginn/utils/bubble_indication_painter.dart';
 import 'package:loginn/ui/MainPage.dart';
 import 'package:loginn/ui/doctor_main.dart';
 import 'package:loginn/ui/hospital_details.dart';
-
+import 'package:loginn/ui/login_page.dart';
+import 'package:http/http.dart'; //to use http request
+import 'dart:convert'; 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
@@ -16,6 +19,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
+      String name = ''; //expected: five letters or more
+  String email = ''; //expected: @
+  String password = ''; //expected: five digits or more
+  String token = '';
+  final String registerUrl = 'http://192.168.56.1:8080/signup';
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -27,16 +35,18 @@ class _LoginPageState extends State<LoginPage>
   final FocusNode myFocusNodeName = FocusNode();
   final FocusNode myFocusNodeUserName = FocusNode();
 
-
+final FocusNode myFocusNodeEmail = FocusNode();
 
   bool _obscureTextLogin = true;
   bool _obscureTextSignup = true;
   bool _obscureTextSignupConfirm = true;
-
+final formKey = GlobalKey<FormState>();
   TextEditingController signupNumberController = new TextEditingController();
   TextEditingController signupNameController = new TextEditingController();
   TextEditingController signupUserNameController = new TextEditingController();
   TextEditingController signupPasswordController = new TextEditingController();
+   TextEditingController signupemailController = new TextEditingController();
+  
   TextEditingController signupConfirmPasswordController =
       new TextEditingController();
       TextEditingController signupNumberController1 = new TextEditingController();
@@ -71,17 +81,7 @@ class _LoginPageState extends State<LoginPage>
                 height: MediaQuery.of(context).size.height >= 775.0
                     ? MediaQuery.of(context).size.height
                     : 775.0,
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
-                      colors: [
-                        Theme.Colors.loginGradientStart,
-                        Theme.Colors.loginGradientEnd
-                      ],
-                      begin: const FractionalOffset(0.0, 0.0),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
+                
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
@@ -249,9 +249,16 @@ class _LoginPageState extends State<LoginPage>
 
 
   Widget _buildSignUp(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 23.0),
-      child: Column(
+    return new Scaffold(
+      
+    body:Builder(
+     
+    
+         builder: (context) => 
+         Center(
+         
+          child: Column(
+            
         children: <Widget>[
           Stack(
             alignment: Alignment.topCenter,
@@ -266,6 +273,8 @@ class _LoginPageState extends State<LoginPage>
                 child: Container(
                   width: 300.0,
                   height: 360.0,
+                  child: new Form(
+                  key: formKey,
                   child: Column(
                     children: <Widget>[
                       Padding(
@@ -297,30 +306,7 @@ class _LoginPageState extends State<LoginPage>
                         height: 1.0,
                         color: Colors.grey[400],
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 5.0, bottom: 10.0, left: 25.0, right: 25.0),
-                            child: TextField(
-                          focusNode: myFocusNodeUserName,
-                          controller: signupUserNameController,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.words,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.user,
-                              color: Colors.grey,
-                            ),
-                            hintText: "User Name",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 16.0),
-                          ),
-                        ),
-                      ),
+                      
                       Container(
                         width: 250.0,
                         height: 1.0,
@@ -330,9 +316,9 @@ class _LoginPageState extends State<LoginPage>
                         padding: EdgeInsets.only(
                             top: 5.0, bottom: 10.0, left: 25.0, right: 25.0),
                         child: TextField(
-                          focusNode: myFocusNodeNumber,
-                          controller: signupNumberController,
-                          keyboardType: TextInputType.number,
+                          focusNode: myFocusNodeEmail,
+                          controller:signupemailController ,
+                          keyboardType: TextInputType.emailAddress,
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
                               fontSize: 16.0,
@@ -343,7 +329,7 @@ class _LoginPageState extends State<LoginPage>
                               FontAwesomeIcons.mobile,
                               color: Colors.grey,
                             ),
-                            hintText: "Phone Number",
+                            hintText: "Email ",
                             hintStyle: TextStyle(
                                 fontFamily: "WorkSansSemiBold", fontSize: 16.0),
                           ),
@@ -392,41 +378,10 @@ class _LoginPageState extends State<LoginPage>
                         height: 1.0,
                         color: Colors.grey[400],
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 5.0, bottom: 10.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          controller: signupConfirmPasswordController,
-                          obscureText: _obscureTextSignupConfirm,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.lock,
-                              color: Colors.grey,
-                            ),
-                            hintText: "Confirmation",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 16.0),
-                            suffixIcon: GestureDetector(
-                              onTap: _toggleSignupConfirm,
-                              child: Icon(
-                                _obscureTextSignupConfirm
-                                    ? FontAwesomeIcons.eye
-                                    : FontAwesomeIcons.eyeSlash,
-                                size: 15.0,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      
                     ],
                   ),
-                ),
+                ),),
               ),
               Container(
                 margin: EdgeInsets.only(top: 340.0),
@@ -469,19 +424,21 @@ class _LoginPageState extends State<LoginPage>
                             fontFamily: "WorkSansBold"),
                       ),
                     ),
-                    onPressed: () {Navigator.pushReplacement(context,
-        new MaterialPageRoute(builder: (BuildContext context) => MainPage()));}
+                    onPressed: () {  if(formKey.currentState.validate()) {
+                                //method to save forms
+                                formKey.currentState.save();
+                                registerPostData(context);}}
                         ),
               ),
-            ],
+            ],),],),
           ),
-        ],
+        
       ),
     );
   }
   Widget _buildSignUp1(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 23.0),
+    return new Scaffold(
+     body:Center(
       child: Column(
         children: <Widget>[
           Stack(
@@ -708,7 +665,7 @@ class _LoginPageState extends State<LoginPage>
           ),
         ],
       ),
-    );
+    ),);
   }
 
   
@@ -944,6 +901,41 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
   }
+   void registerPostData(BuildContext context) async {
+    //post body
+    dynamic bodyToSend = {'email': signupemailController.text , 'password': signupPasswordController.text};
+    dynamic headers = {'Content-Type': 'application/json'};
+    var body = json.encode(bodyToSend);
+    print(body);
+    //request
+    var response = await post(registerUrl, body: body, headers: headers);
+    var state = json.decode(response.body);
+    //token
+    var givenToken = state['token'];
+    token = givenToken;
+    print(token);
+    if(response.statusCode == 200) {
+      //Navigator.of(context).pushNamed('/secondScreen');
+      var route = new MaterialPageRoute(
+        builder: (BuildContext context) =>
+          new Login(),
+      );
+      Navigator.of(context).push(route);
+    } else {
+      //error message
+      var error = state['error'];
+      final snackBar = SnackBar(
+        content: Text('E-mail ou senha inválidos'),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {},
+        ),
+      );
+      Scaffold.of(context).showSnackBar(snackBar);
+      print(error.toString());
+    }
+  }
+
   void _onSignUpButtonPress() {
     _pageController.animateToPage(0,
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);

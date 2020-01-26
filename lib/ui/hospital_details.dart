@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:loginn/ui/edit_hospro.dart';
 import 'MainPage.dart';
 import 'doctor_details.dart';
 
@@ -19,6 +19,14 @@ class _HospitalDeitalsState extends State<HospitalDeitals> {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 0,
+        actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.edit,color: Colors.grey,),
+            onPressed: (){
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (BuildContext context) => EditHospitalProfile()));
+            },
+          ),],
       ),
 
       body: Stack(

@@ -12,10 +12,10 @@ class _UserProfileState extends State<UserProfile>
     with SingleTickerProviderStateMixin {
   bool _status = true;
   final FocusNode myFocusNode = FocusNode();
- File galleryFile;
+ File _image;
 
 //save the result of camera file
-  File cameraFile;
+ 
   @override
   void initState() {
     // TODO: implement initState
@@ -25,24 +25,24 @@ class _UserProfileState extends State<UserProfile>
   @override
   Widget build(BuildContext context) {
         imageSelectorGallery() async {
-      galleryFile = await ImagePicker.pickImage(
+      var image = await ImagePicker.pickImage(
         source: ImageSource.gallery,
         // maxHeight: 50.0,
         // maxWidth: 50.0,
       );
-      print("You selected gallery image : " + galleryFile.path);
-      setState(() {});
+      print("You selected gallery image : " + _image.path);
+      setState(() {_image= image;});
     }
 
     //display image selected from camera
     imageSelectorCamera() async {
-      cameraFile = await ImagePicker.pickImage(
+     var image = await ImagePicker.pickImage(
         source: ImageSource.camera,
         //maxHeight: 50.0,
         //maxWidth: 50.0,
       );
-      print("You selected camera image : " + cameraFile.path);
-      setState(() {});
+      print("You selected camera image : " + _image.path);
+      setState(() {_image= image;});
     }
     return new Scaffold(
       
@@ -68,14 +68,9 @@ class _UserProfileState extends State<UserProfile>
                             new Container(
                                 width: 140.0,
                                 height: 140.0,
-                                decoration: new BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: new DecorationImage(
-                                    image: new ExactAssetImage(
-                                        'assets/img/user.png'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                )),
+                                child: _image==null?Image.asset('assets/img/user.png')
+                                :prefix0.Image.file(_image),
+                                ),
                           ],
                         ),
                         Padding(
@@ -89,11 +84,21 @@ class _UserProfileState extends State<UserProfile>
                                   child: new IconButton(
                                      icon: Icon(Icons.camera_alt),
                                     color: Colors.white,
+                                     onPressed: imageSelectorCamera,
+                                  ),
+                                ),
+                                 new CircleAvatar(
+                                  backgroundColor: Color(0xFF005ab3),
+                                  radius: 25.0,
+                                  child: new IconButton(
+                                     icon: Icon(Icons.wallpaper),
+                                    color: Colors.white,
                                      onPressed: imageSelectorGallery,
                                   ),
                                 )
                               ],
-                            )),
+                            )
+                            ),
                       ]),
                     )
                   ],
