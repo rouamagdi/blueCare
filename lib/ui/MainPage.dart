@@ -1,13 +1,14 @@
-import 'package:loginn/fragments/messages_fragment.dart';
+
 import 'package:loginn/fragments/home_fragment.dart';
 import 'package:loginn/fragments/reservations_fragment.dart';
 import 'package:loginn/fragments/consultency_fragment.dart';
 import 'package:loginn/style/theme.dart' as Theme;
 import 'package:flutter/material.dart';
+import 'package:loginn/ui/chat_home.dart';
 import 'package:loginn/ui/user_profile.dart';
 
 import 'notifications.dart';
-import '../fragments/messages_fragment.dart';
+
 
 class MainPage extends StatefulWidget {
   @override
@@ -43,7 +44,7 @@ class _MainPageState extends State<MainPage> {
       return IconButton(
         icon: const Icon(Icons.message,color:Colors.grey,),
         onPressed: () { Navigator.push(context,
-                  new MaterialPageRoute(builder: (BuildContext context) => MessagesFragment())); },
+                  new MaterialPageRoute(builder: (BuildContext context) => Chat())); },
         
       );
     },

@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:loginn/fragments/doc_home.dart';
+import 'package:loginn/models/login_model.dart';
 import 'package:loginn/style/theme.dart' as Theme;
+import 'package:loginn/ui/doctor_main.dart';
+import 'package:loginn/ui/edit_hospro.dart';
+import 'package:loginn/ui/hospital_details.dart';
 import 'package:loginn/utils/bubble_indication_painter.dart';
 import 'package:loginn/ui/signup_page.dart';
 import 'package:http/http.dart'; //to use http request
 import 'dart:convert'; 
+import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'package:loginn/ui/MainPage.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loginn/utils/validation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class Login extends StatefulWidget {
-  Login({Key key}) : super(key: key);
-
+  final ResponseBody response;
+  Login({Key key, @required this.response}) : super(key: key);
   @override
   _LoginState createState() => new _LoginState();
 }
@@ -19,12 +26,14 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login>
     with SingleTickerProviderStateMixin,Validation {
 String name = ''; //expected: five letters or more
-  String email = ''; //expected: @
+  String username = ''; //expected: @
   String password = ''; //expected: five digits or more
   String token = ''; //token validator
+  bool isFreelancer =false;
+  bool isHospital=false;
 
 
-   final String loginUrl = 'http://192.168.56.1:8080/signin';
+   final String loginUrl = 'http://192.168.56.1:5000/api/users/login';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -33,8 +42,11 @@ String name = ''; //expected: five letters or more
   final FocusNode myFocusNodePassword = FocusNode();
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeName = FocusNode();
-
+   final FocusNode myFocusNodeUserName = FocusNode();
+  TextEditingController signupUserNameController = new TextEditingController();
     TextEditingController loginEmailController = new TextEditingController();
+    
+    TextEditingController loginUserNameController = new TextEditingController();
    TextEditingController loginPasswordController = new TextEditingController();
   bool _obscureTextLogin = true;
  
@@ -155,8 +167,13 @@ final formKey = GlobalKey<FormState>();
   Widget _buildSignIn(BuildContext context) {
     return new Scaffold(
       backgroundColor: Colors.white,
-     body: Container(
-      padding: EdgeInsets.only(top: 23.0),
+     body:Builder(
+     
+    
+         builder: (context) => 
+     Center(
+         
+         
       child: Column(
         children: <Widget>[
           Stack(
@@ -173,7 +190,7 @@ final formKey = GlobalKey<FormState>();
                 
                 child: Container(
                   width: 300.0,
-                  height: 190.0,
+                  height: 250.0,
                   
                   child: new Form(
                   key: formKey,
@@ -182,12 +199,18 @@ final formKey = GlobalKey<FormState>();
                       Padding(
                         padding: EdgeInsets.only(
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          focusNode: myFocusNodeEmailLogin,
-                          
-                          controller: loginEmailController,
-                          keyboardType: TextInputType.emailAddress,
-                          
+                        child: TextFormField(
+                          focusNode: myFocusNodeUserName,
+                          controller: loginUserNameController,
+                          validator: (value){
+                            if(value.length == 0) {
+                             return 'Fill in this field';}
+                             else if(value.length <= 4) {
+                          return "user name is too short and have to"+"\n"+"contain at least one number";
+                            }else {
+                              return null;}},
+                          keyboardType: TextInputType.text,
+                       
 
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
@@ -195,44 +218,44 @@ final formKey = GlobalKey<FormState>();
                               color: Colors.black),
                           decoration: InputDecoration(
                             
-                            border: InputBorder.none,
+                           
                             icon: Icon(
-                              FontAwesomeIcons.envelope,
-                              color: Colors.black,
+                              FontAwesomeIcons.user,
+                              color: Colors.grey,
                               size: 22.0,
                             ),
-                            hintText: "Email Address",
+                            hintText: "User Name",
                             hintStyle: TextStyle(
                                 fontFamily: "WorkSansSemiBold", fontSize: 17.0),
                           ),
                         ),
                       ),
-                      Container(
-                        width: 250.0,
-                        height: 1.0,
-                        color: Colors.grey[400],
-                      ),
-                      Padding(
+                    Padding(
                         padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          focusNode: myFocusNodePasswordLogin,
+                            top: 1.0, bottom: 10.0, left: 25.0, right: 25.0),
+                        child: TextFormField(
+                          focusNode: myFocusNodePassword,
                           controller: loginPasswordController,
+                          validator: (String value){if(value.length == 0) {
+                             return 'Fill in this field';}
+                             else if(value.length < 6) {
+                          return "Password too short and have"+"\n"+" to contain numbers";
+                            }else {
+                              return null;}},
                           obscureText: _obscureTextLogin,
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
                               fontSize: 16.0,
-                              color: Colors.black),
+                              color: Colors.grey),
                           decoration: InputDecoration(
-                            border: InputBorder.none,
+                           
                             icon: Icon(
                               FontAwesomeIcons.lock,
-                              size: 22.0,
-                              color: Colors.black,
+                              color: Colors.grey,
                             ),
                             hintText: "Password",
                             hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 17.0),
+                                fontFamily: "WorkSansSemiBold", fontSize: 16.0),
                             suffixIcon: GestureDetector(
                               onTap: _toggleLogin,
                               child: Icon(
@@ -240,7 +263,7 @@ final formKey = GlobalKey<FormState>();
                                     ? FontAwesomeIcons.eye
                                     : FontAwesomeIcons.eyeSlash,
                                 size: 15.0,
-                                color: Colors.black,
+                                color: Colors.grey,
                               ),
                             ),
                           ),
@@ -252,17 +275,11 @@ final formKey = GlobalKey<FormState>();
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 170.0),
+                
+                 margin: EdgeInsets.only(top: 230.0),
                 decoration: new BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: Theme.Colors.loginGradientEnd,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                   
-                  ],
+                  
                   
                 ),
                 child: MaterialButton(
@@ -281,7 +298,16 @@ final formKey = GlobalKey<FormState>();
                       ),
                     ),
                     onPressed: () =>
-                        loginPostData(context)
+                       {
+                         
+
+                        
+
+                          if(formKey.currentState.validate()) {
+                                //method to save forms
+                                formKey.currentState.save(),
+                                loginPostData(context),}
+                       }
                         ),
               ),
             ],
@@ -370,36 +396,118 @@ final formKey = GlobalKey<FormState>();
             ],
           ),
         ],
-      ),
+     ),),
     ),);
   }
+  String _decodeBase64(String str) {
+  String output = str.replaceAll('-', '+').replaceAll('_', '/');
 
+  switch (output.length % 4) {
+    case 0:
+      break;
+    case 2:
+      output += '==';
+      break;
+    case 3:
+      output += '=';
+      break;
+    default:
+      throw Exception('Illegal base64url string!"');
+  }
+
+  return utf8.decode(base64Url.decode(output));
+}
 
 void loginPostData(BuildContext context) async {
     //post body
-    dynamic bodyToSend = {'email': loginEmailController.text, 'password': loginPasswordController.text};
+    dynamic bodyToSend = {'userName': loginUserNameController.text, 'password': loginPasswordController.text,};
     dynamic headers = {'Content-Type': 'application/json; charset=utf-8'};
     var body = json.encode(bodyToSend);
     print(body);
     //request
-    var response = await post(loginUrl, body: body, headers: headers);
-    var state = json.decode(response.body);
+    var response = await post(loginUrl, body: body, headers: headers);  
+    Map<String, dynamic> state = json.decode(response.body);   
+    if(response.statusCode == 200) {
+      
+      
+
     //token
     var givenToken = state['token'];
-    token = givenToken;
+    
+    
+   var token = givenToken;
     print(token);
-    if(response.statusCode == 200) {
-      //Navigator.of(context).pushNamed('/secondScreen');
-      var route = new MaterialPageRoute(
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('token',token);
+   var preftoken = prefs.getString('token');
+
+  print(preftoken);
+   Map<String, dynamic> parseJwt(token) {
+  final parts = token.split('.');
+  if (parts.length != 3) {
+    throw Exception('invalid token');
+  }
+
+  final payload = _decodeBase64(parts[1]);
+  final payloadMap = json.decode(payload);
+  if (payloadMap is! Map<String, dynamic>) {
+    throw Exception('invalid payload');
+  }
+
+  return payloadMap;
+  
+}
+ 
+ Map payload=  parseJwt(token);
+ 
+    
+  if(payload['isFreelancer'] == true ){
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+  var token = prefs.getString('token');
+  print(token);
+    var route = new MaterialPageRoute(
+
+        builder: (BuildContext context) =>
+          new DoctorPage(),
+          
+      );
+      Navigator.of(context).push(route); 
+  } else  if(payload['isHospital'] == true){
+    
+    var route = new MaterialPageRoute(
+        builder: (BuildContext context) =>
+          new HospitalDeitals(),
+      );
+      Navigator.of(context).push(route); 
+  }  else  if(payload['isUser'] == true){
+    var route = new MaterialPageRoute(
         builder: (BuildContext context) =>
           new MainPage(),
       );
-      Navigator.of(context).push(route);
-    } else {
+      Navigator.of(context).push(route); 
+  } 
+    }
+     else if (response.statusCode == 404) {
+    
+     state.toString();
       //error message
-      var error = state['error'];
+      var error = state['userName'];
       final snackBar = SnackBar(
-        content: Text('E-mail ou senha incorretos'),
+        content: Text(error),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {},
+        ),
+      );
+      Scaffold.of(context).showSnackBar(snackBar);
+      print(error.toString());
+    }else if (response.statusCode == 400)  {
+     
+     state.toString();
+      //error message
+      var error = state['password'];
+      final snackBar = SnackBar(
+        content: Text(error),
         action: SnackBarAction(
           label: 'Ok',
           onPressed: () {},

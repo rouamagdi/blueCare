@@ -1,4 +1,4 @@
-import 'package:loginn/fragments/messages_fragment.dart';
+
 import 'package:loginn/fragments/home_fragment.dart';
 import 'package:loginn/fragments/reservations_fragment.dart';
 import 'package:loginn/fragments/doc_home.dart';
@@ -6,12 +6,17 @@ import 'package:loginn/fragments/consultency_fragment.dart';
 import 'package:loginn/fragments/doc_consult.dart';
 
 import 'package:flutter/material.dart';
+import 'package:loginn/models/login_model.dart';
 import 'package:loginn/ui/doctor_details.dart';
 
+import 'doctor_profile.dart';
 import 'notifications.dart';
-import '../fragments/messages_fragment.dart';
+
 
 class DoctorPage extends StatefulWidget {
+   final ResponseBody response;
+
+   DoctorPage({Key key,  @required this.response}) : super(key: key);
   @override
   _DoctorPageState createState() => _DoctorPageState();
 }
@@ -21,7 +26,7 @@ class _DoctorPageState extends State<DoctorPage> {
     DocHome(),
     DoctorCon(),
     
-    DoctorDeitals(),  ];
+    DoctorProfile(),  ];
   int _selectedIndex = 0;
   bool opend = false;
 
@@ -36,33 +41,7 @@ class _DoctorPageState extends State<DoctorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: Color(0xFF005ab3),
-        centerTitle: true,
-         leading: Builder(
-    builder: (BuildContext context) {
-      return IconButton(
-        icon: const Icon(Icons.message,color: Colors.white),
-        onPressed: () { Navigator.push(context,
-                  new MaterialPageRoute(builder: (BuildContext context) => MessagesFragment())); },
-        
-      );
-    },
-  ),
-        title: Text('Blue Care'),
-       
-        elevation: 0,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.notifications,color: Colors.white,),
-            onPressed: (){
-              Navigator.push(context,
-                  new MaterialPageRoute(builder: (BuildContext context) => Notifications()));
-            },
-          ),
-           
-        ],
-      ),
+   
       body: _fragments.elementAt(_selectedIndex),
       bottomNavigationBar: BottomAppBar(
           child: BottomNavigationBar(
@@ -80,14 +59,24 @@ class _DoctorPageState extends State<DoctorPage> {
                   icon: Icon(Icons.message), title: Text("profile")),
             ],
             currentIndex: _selectedIndex,
-            onTap: (int selectedIndex) {
-              setState(() {
-                _selectedIndex = selectedIndex;
-              }
-              );
-            },
+            onTap: onTabTapped ,
+
           )
       ),
     );
+    
   }
+onTabTapped (int selectedIndex) {
+              
+              
+              setState(() {
+                _selectedIndex = selectedIndex;
+              }
+            
+              
+              );
+              
+               
+            } 
+
 }

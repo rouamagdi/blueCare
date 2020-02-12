@@ -9,9 +9,12 @@ import 'package:loginn/generated/i18n.dart'
 import 'package:loginn/google_map_location_picker.dart';
 //import 'package:google_map_location_picker_example/keys.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:loginn/i18n.dart';
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
+import 'package:loginn/style/theme.dart' as Theme;
 
 import 'package:loginn/ui/Center_map.dart';
 final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
@@ -53,10 +56,10 @@ class _EditHospitalProfileState extends State<EditHospitalProfile> {
   List<Widget>list = new List();
  bool _isFieldNameValid;
 final formKey = GlobalKey<FormState>();
-
+ final format = DateFormat("yyyy-MM-dd");
+ final format1 = DateFormat("hh:mm a");
 int _count = 1;
 
-  
   @override
   Widget build(BuildContext context) {
     
@@ -99,14 +102,7 @@ int _count = 1;
         Locale('pt', ''),
         Locale('tr', ''),
       ],*/
-      floatingActionButton: new FloatingActionButton(
-        
-        onPressed: (){
-    list.add(new TextField(focusNode: centerSpecilaist,
-                          
-                          controller: _centerSpecialist,decoration: InputDecoration(hintText: 'Enter specialist '),));
-    setState(() {});
-      }, child: new Icon(Icons.add),),
+      
       key: _scaffoldState,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
@@ -413,14 +409,22 @@ int _count = 1;
                             mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
                               new Flexible(
-                                child: new TextField(
-                                   focusNode: centerTime,
+                                child: new  DateTimeField(
+                                   decoration: InputDecoration(
+            
+                        hintText: 'enter Time of opening and closeing of the center',),
+                         focusNode: centerTime,
                           
                           controller: _centerTime,
-                                  decoration: const InputDecoration(
-                                      hintText: "Enter Opening and Closing time of the Center"),
-                                
-                                ),
+        format: format1,
+        onShowPicker: (context, currentValue) async {
+          final time = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+          );
+          return DateTimeField.convert(time);
+        },
+      ),
                               ),
                             ],
                           )),
@@ -490,14 +494,22 @@ int _count = 1;
                             mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
                               new Flexible(
-                                child: new TextField(
-                                  focusNode: centerLanuchDate,
+                                child: new DateTimeField(
+          decoration: InputDecoration(
+            
+                        hintText: 'Date of building the center',),
+                         focusNode: centerLanuchDate,
                           
                           controller: _centerLanuch,
-                                  decoration: const InputDecoration(
-                                      hintText: "Enter launch date of the center"),
-                                
-                                ),
+        format: format,
+        onShowPicker: (context, currentValue) {
+          return showDatePicker(
+              context: context,
+              firstDate: DateTime(1900),
+              initialDate: currentValue ?? DateTime.now(),
+              lastDate: DateTime(2100));
+        },
+      ),
                               ),
                             ],
                           )),
@@ -545,21 +557,55 @@ int _count = 1;
                           child: new Row(
                             mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
-                              new Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
+                             
+                              
+                               
                                   new Text(
                                     'Specialists',
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.bold),
                                   ),
+                                  SizedBox(width: 30.0),
+                                  FlatButton(
+                                      color: Colors.blue,
+  textColor: Colors.white,
+  disabledColor: Colors.grey,
+  disabledTextColor: Colors.black,
+  
+   shape: CircleBorder(),
+  
+                                     
+        onPressed: (){
+    list.add(new TextField(focusNode: centerSpecilaist,
+                          
+                          controller: _centerSpecialist,decoration: InputDecoration(hintText: 'Enter specialist '),));
+    setState(() {});
+      }, child: new Icon(Icons.add),
+      
+                                  ),
                                 ],
+                            
+                            
+                          )),
+                    Padding(
+                          padding: EdgeInsets.only(
+                              left: 25.0, right: 25.0, top: 2.0),
+                          child: new Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              new Flexible(
+                                child: new TextField(
+                                  focusNode: centerSpecilaist,
+                          
+                          controller: _centerSpecialist,
+                                  decoration: const InputDecoration(
+                                      hintText: "Enter Specialists"),
+                                
+                                ),
                               ),
                             ],
                           )),
-                    
                          new Padding(
                            padding: EdgeInsets.only(
                               left: 25.0, right: 25.0, top: 2.0,bottom: 20.0,),
@@ -571,12 +617,14 @@ int _count = 1;
                              
                               new Flexible(
                                 
+                                
                            child: new ListView.builder(shrinkWrap: true,itemBuilder: (context, index){
                             
     Widget widget = list.elementAt(index);
     return widget;
   }, itemCount: list.length,),
-                         ),],),),
+                         ),],),
+                         ),
 
                       
                       
@@ -585,8 +633,42 @@ int _count = 1;
                      
                       
                     ],
+                    
                   ),
+                  
                 ),
+                Container(
+                
+                 margin: EdgeInsets.only(top: 30.0),
+                decoration: new BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  
+                  
+                ),
+                child: MaterialButton(
+                    highlightColor: Colors.transparent,
+                    color: Theme.Colors.loginGradientEnd,
+                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 42.0),
+                      child: Text(
+                        "Save",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 19.0,
+                            fontFamily: "WorkSansBold"),
+                      ),
+                    ),
+                    onPressed: () =>
+                       {
+                          if(formKey.currentState.validate()) {
+                                //method to save forms
+                                formKey.currentState.save(),
+                                }
+                       }
+                        ),
+              ),
             
             ],
           ),
@@ -594,8 +676,11 @@ int _count = 1;
       ),
     ),],),],
     
-      ),),),);
+      ),),
+      ),
+      );
   }
+
 
   
 }

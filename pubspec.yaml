@@ -27,7 +27,8 @@ dependencies:
   image_picker:
   intl: ^0.15.7
   http:
-
+  shared_preferences:
+  flutter_cupertino_localizations: ^1.0.1
   intl_translation: ^0.17.9
   google_maps_flutter: ^0.5.21
   json_serializable: ^2.0.2
@@ -35,10 +36,15 @@ dependencies:
   geolocator: ^5.1.5
   android_intent: ^0.3.0
   provider: ^3.1.0
-  
+  datetime_picker_formfield: ^ 0.4.3
+  video_player: ^0.10.2+1
   stack_trace: ^1.9.3
   flutter_google_places: ^0.1.4
+  jaguar_jwt: 
   flutter_screenutil : ^1.0.2
+
+  
+  transparent_image: any
   location: ^1.4.1  
 dev_dependencies:
   pedantic: ^1.4.0

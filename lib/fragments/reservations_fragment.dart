@@ -9,120 +9,203 @@ class ReservationsFragment extends StatefulWidget {
 class _ReservationsFragmentState extends State<ReservationsFragment> with TickerProviderStateMixin{
   TabController tabController;
  
-  @override
-  Widget build(BuildContext context) {
-    tabController = new TabController(length: 2, vsync: this);
+ Widget build(BuildContext context) {
+    return Scaffold(
 
-    var tabBarItem = new TabBar(
-      tabs: [
-        new Tab(
-          child:Text('Current')
-        ),
-        new Tab(
-          child:Text('Previous')
-        ),
-       
-      ],
-      controller: tabController,
-      indicatorColor: Colors.white,
-    );
+      
+      backgroundColor:Colors.transparent,
+      body: DefaultTabController(
+        
+        length: 2,
+        child: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+           
+              SliverPersistentHeader(
+                
+                delegate: _SliverAppBarDelegate(
 
-    var listItem = new ListView.builder(
-      itemCount: 20,
-      itemBuilder: (BuildContext context, int index) {
-        return new ListTile(
-          title: new Card(
-            elevation: 5.0,
-            child: new Container(
-              alignment: Alignment.center,
-              margin: new EdgeInsets.only(top: 10.0, bottom: 10.0),
-              child: new Text("ListItem $index"),
-            ),
-          ),
-          onTap: () {
-            showDialog(
-                barrierDismissible: false,
-                context: context,
-                child: new CupertinoAlertDialog(
-                  title: new Column(
-                    children: <Widget>[
-                      new Text("ListView"),
-                      new Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      ),
+                  TabBar(
+                 // isScrollable: true,
+                    indicatorColor: Color(0xFF005ab3),
+                    labelColor:Color(0xFF005ab3),
+                    unselectedLabelColor: Colors.black54,
+                    
+                    tabs: [
+
+                      Tab( text: "Current"),
+                      Tab( text: "Previous"),
+                     
+                      
                     ],
                   ),
-                  content: new Text("Selected Item $index"),
-                  actions: <Widget>[
-                    new FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: new Text("OK"))
-                  ],
-                ));
+                ),
+                pinned: true,
+              ),
+            ];
           },
-        );
-      },
-    );
-var listItem2 = new ListView.builder(
-      itemCount: 20,
-      itemBuilder: (BuildContext context, int index) {
-        return new ListTile(
-          title: new Card(
-            elevation: 5.0,
-            child: new Container(
-              alignment: Alignment.center,
-              margin: new EdgeInsets.only(top: 10.0, bottom: 10.0),
-              child: new Text("ListItem $index"),
-            ),
-          ),
-          onTap: () {
-            showDialog(
-                barrierDismissible: false,
-                context: context,
-                child: new CupertinoAlertDialog(
-                  title: new Column(
-                    children: <Widget>[
-                      new Text("ListView"),
-                      new Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      ),
-                    ],
-                  ),
-                  content: new Text("Selected Item $index"),
-                  actions: <Widget>[
-                    new FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: new Text("OK"))
-                  ],
-                ));
-          },
-        );
-      },
-    );
-
-   
-    return new DefaultTabController(
-      length: 2,
-      child: new Scaffold(
-        appBar: new AppBar(
+          body:
           
-          bottom: tabBarItem,
-        ),
-        body: new TabBarView(
-          controller: tabController,
-          children: [
-            listItem,
-            listItem2,
+          TabBarView(
+            children: [
+              Container(
+                
+                  //height: 450,
+                  child: ListView.builder(
+                      
+                      itemCount: 11,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                      itemBuilder: ( context, int index) {
+                          return Column(
+              children: <Widget>[
+                Divider(
+                  height: 12.0,
+                ),
+                         ListTile(
+         leading: CircleAvatar(
+                    radius: 24.0,
+                    backgroundImage: new AssetImage('assets/img/logo.png'),
+                  ),
+                  title: Row(
+                    children: <Widget>[
+                      Text("consult name"),
+                      SizedBox(
+                        width: 16.0,
+                      ),
+                      Text(
+                       "date",
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ],
+                  ),
+                  subtitle: Text("subtitle"),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14.0,
+                  ),
+          onTap: () {
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                child: new CupertinoAlertDialog(
+                  title: new Column(
+                    children: <Widget>[
+                      new Text("ListView"),
+                      new Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                    ],
+                  ),
+                  content: new Text("Selected Item $index"),
+                  actions: <Widget>[
+                    new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: new Text("OK"))
+                  ],
+                ));
+          },),],
+        );
+                      }
+                  )
+              ),
+              Container(
+                  //height: 450,
+                  child: ListView.builder(
+                      itemCount: 11,
+                      
+                      
+                      itemBuilder: (BuildContext context, int index) {
+                        return Column(
+              children: <Widget>[
+                Divider(
+                  height: 12.0,
+                ),
+                         ListTile(
+         leading: CircleAvatar(
+                    radius: 24.0,
+                    backgroundImage: new AssetImage('assets/img/logo.png'),
+                  ),
+                  title: Row(
+                    children: <Widget>[
+                      Text("consult name"),
+                      SizedBox(
+                        width: 16.0,
+                      ),
+                      Text(
+                       "date",
+                        style: TextStyle(fontSize: 12.0),
+                      ),
+                    ],
+                  ),
+                  subtitle: Text("subtitle"),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14.0,
+                  ),
+          onTap: () {
+            showDialog(
+                barrierDismissible: false,
+                context: context,
+                child: new CupertinoAlertDialog(
+                  title: new Column(
+                    children: <Widget>[
+                      new Text("ListView"),
+                      new Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                    ],
+                  ),
+                  content: new Text("Selected Item $index"),
+                  actions: <Widget>[
+                    new FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: new Text("OK"))
+                  ],
+                ));
+          },),],
+        );
+                      }
+                  )
+              ),
             
-          ],
+              
+            ],
+          ),
         ),
       ),
     );
+  }
+
+}
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return new Container(
+     color: Colors.white,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
   }
 }

@@ -2,59 +2,66 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:loginn/components/articlsadd.dart';
+import 'package:loginn/components/doctor_gallery.dart';
 import 'package:loginn/components/user_consult.dart';
 import 'package:loginn/components/user_reservation.dart';
-import 'package:loginn/models/login_model.dart';
 
-import 'package:loginn/ui/chat_home.dart';
 import 'MainPage.dart';
 import 'package:loginn/style/theme.dart' as Theme;
 
-class DoctorDeitals extends StatefulWidget {
-   final ResponseBody response;
+import 'edit_docpro.dart';
 
-  //in the constructor, require a Response
-  DoctorDeitals({Key key, @required this.response}) : super(key: key);
-
-  _DoctorDeitalsState createState() => _DoctorDeitalsState();
+class DoctorProfile extends StatefulWidget {
+  _DoctorProfileState createState() => _DoctorProfileState();
 }
 
-class _DoctorDeitalsState extends State<DoctorDeitals> {
+class _DoctorProfileState extends State<DoctorProfile> {
   bool _status = true;
-   File galleryFile;
+  
 
 //save the result of camera file
-  File cameraFile;
+ 
+   File _image;
   @override
   Widget build(BuildContext context) {
-    imageSelectorGallery() async {
-      galleryFile = await ImagePicker.pickImage(
+    Future imageSelectorGallery() async {
+      var image = await ImagePicker.pickImage(
         source: ImageSource.gallery,
         // maxHeight: 50.0,
         // maxWidth: 50.0,
       );
-      print("You selected gallery image : " + galleryFile.path);
-      setState(() {});
+    
+      setState(() {
+        _image= image;
+        });
     }
 
+
     //display image selected from camera
-    imageSelectorCamera() async {
-      cameraFile = await ImagePicker.pickImage(
+    Future imageSelectorCamera() async {
+     var image = await ImagePicker.pickImage(
         source: ImageSource.camera,
         //maxHeight: 50.0,
         //maxWidth: 50.0,
       );
-      print("You selected camera image : " + cameraFile.path);
-      setState(() {});
+     
+      setState(() {
+        _image= image;
+        });
+        
     }
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.white,
+    
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
+        
+        title: Text(
+          " Profile",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       //backgroundColor: AppColors.mainColor,
        body: Column(
@@ -128,12 +135,11 @@ class _DoctorDeitalsState extends State<DoctorDeitals> {
                         children: <Widget>[
                           MaterialButton(
                             onPressed: (){
-                              Navigator.pushReplacement(context,
-                                  new MaterialPageRoute(builder: (BuildContext context) => UserConsult()));
+                              Navigator.of(context).push( MaterialPageRoute(builder: (BuildContext context) => EditDoctorProfile()));
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
-                              child: Text("Consult"),
+                              child: Text("Edit profile"),
                             ),
                             textColor: Colors.white,
                             color: Colors.grey,
@@ -141,17 +147,17 @@ class _DoctorDeitalsState extends State<DoctorDeitals> {
                             //minWidth: MediaQuery.of(context).size.width-40,
                           ),
                           SizedBox(width: 10,),
-                          MaterialButton(
+                           MaterialButton(
                             onPressed: (){
-                              Navigator.pushReplacement(context,
-                                  new MaterialPageRoute(builder: (BuildContext context) => Chat()));
+                              Navigator.of(context).push( MaterialPageRoute(builder: (BuildContext context) => AddArticls()));
                             },
                             child: Container(
                               padding: EdgeInsets.all(5),
-                              child: Text("Message"),
+                              child: Text(" create Articls"),
                             ),
                             textColor: Colors.white,
-                             color: Theme.Colors.loginGradientStart,
+                            color: Colors.grey,
+                            //height: 30,
                             //minWidth: MediaQuery.of(context).size.width-40,
                           ),
                         ],
@@ -245,27 +251,20 @@ class _DoctorDeitalsState extends State<DoctorDeitals> {
                   Text("- 3 years in Egypt Hospital",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
                   SizedBox(height: 5,),
                   Text("- 2 years in Kids Hospital",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
+               
+               SizedBox(height: 20,),
+           Text(
+                    "Album :",
+                    style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey,fontSize: 20),
+                  ),
+                  
                 ],
               ),
             )
           ),
 
-          MaterialButton(
-            onPressed: (){
-              Navigator.pushReplacement(context,
-                  new MaterialPageRoute(builder: (BuildContext context) => UserReservation()));
-            },
-            child: Container(
-              padding: EdgeInsets.all(15),
-              child: Text("BOOK An APPOINTMENT"),
-            ),
-            textColor: Colors.white,
-            color: Theme.Colors.loginGradientStart,
-            minWidth: MediaQuery.of(context).size.width-40,
-          ),
-
-          SizedBox(height: 20,)
-
+         
+          
         ],
       )
     );

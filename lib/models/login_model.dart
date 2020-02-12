@@ -1,27 +1,47 @@
+
+import 'dart:convert';
 //login class
-class LoginBody {
+class Login {
   //login objects
-  static String email, password;
+   String username, password;
+  
 
   //login constructor
-  LoginBody({email, password});
+  Login({this.username, this.password});
 
   //function to convert from json to object 
-  factory LoginBody.fromJson(Map <String, dynamic> parsedJson) {
-    return LoginBody(
-      email: parsedJson['email'],
-      password: parsedJson['password']
+  factory Login.fromJson(Map <String, dynamic> parsedJson) {
+    return Login(
+      username: parsedJson['username'],
+      password: parsedJson['password'],
+ 
     );
   }
 
+Map<String, dynamic> toJson() {
+    return { "username": username, "password": password};
+  }
   //toString method
   String toString() {
-    return 'email: $email, password: $password';
+    return 'username: $username, password: $password';
   }
 }
 
-class ResponseBody {
-  String name, email, password, accessToken;
+List<Login> loginFromJson(String jsonData) {
+  final data = json.decode(jsonData);
+  return List<Login>.from(data.map((item) => Login.fromJson(item)));
+}
 
-  ResponseBody({this.name, this.email, this.password, this.accessToken});
+String loginToJson(Login data) {
+  final jsonData = data.toJson();
+  return json.encode(jsonData);
+}
+
+
+
+class ResponseBody {
+  String username,  password, accessToken;
+
+
+  ResponseBody({this.username, this.password, this.accessToken});
 }

@@ -1,3 +1,4 @@
+import 'package:loginn/ui/doctor_details.dart';
 import 'package:loginn/ui/hospital_details.dart';
 
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _IndependentState extends State<Independent> {
               child: new InkWell(
                 onTap:(){
                   Navigator.push(context,
-                      new MaterialPageRoute(builder: (BuildContext context) => HospitalDeitals()));
+                      new MaterialPageRoute(builder: (BuildContext context) => DoctorDeitals()));
                 },
                 child: new Container(
                   child: Column(
@@ -48,7 +49,7 @@ class _IndependentState extends State<Independent> {
                       Padding(
                         padding: EdgeInsets.all(5),
                         child: Text(
-                          "Total Care",
+                          "Doctor Name ",
                           style: TextStyle(fontWeight: FontWeight.w600,fontSize: 20),
                         ),
                       ),
