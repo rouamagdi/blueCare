@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:loginn/components/all_articls.dart';
+import 'package:loginn/components/all_articls.dart' as prefix0;
 import 'package:loginn/components/doctor_articls.dart';
 import 'package:loginn/fragments/doc_home.dart';
+import 'package:loginn/models/articls_model.dart' as prefix1;
+import 'package:loginn/models/articls_model.dart';
 import 'package:loginn/models/login_model.dart';
 import 'package:loginn/models/profile.dart';
 import 'dart:io';
@@ -27,10 +31,12 @@ final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
 
 class AddArticls extends StatefulWidget {
-  final ResponseBody response;
+Articls articls;
+
+  AddArticls({this.articls});
 
   //in the constructor, require a Response
-  AddArticls({Key key, @required this.response}) : super(key: key);
+  
 
   @override
   _AddArticlsState createState() => _AddArticlsState();
@@ -56,47 +62,12 @@ int _count = 1;
 
   @override
   Widget build(BuildContext context) {
-    
-     Future imageSelectorGallery() async {
-      var image = await ImagePicker.pickImage(
-        source: ImageSource.gallery,
-        // maxHeight: 50.0,
-        // maxWidth: 50.0,
-      );
-    
-      setState(() {
-        _image= image;
-        });
-    }
+   
 
     //display image selected from camera
-    Future imageSelectorCamera() async {
-     var image = await ImagePicker.pickImage(
-        source: ImageSource.camera,
-        //maxHeight: 50.0,
-        //maxWidth: 50.0,
-      );
-     
-      setState(() {
-        _image= image;
-        });
-        
-    }
+ 
      return Scaffold(
-       /*localizationsDelegates: const [
-        location_picker.S.delegate,
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const <Locale>[
-        Locale('en', ''),
-        Locale('ar', ''),
-        Locale('pt', ''),
-        Locale('tr', ''),
-      ],*/
-    
+  
       key: _scaffoldState,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
@@ -302,11 +273,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
     if(response.statusCode == 200) {
       print(response.statusCode);
       //Navigator.of(context).pushNamed('/secondScreen');
-      var route = new MaterialPageRoute(
-        builder: (BuildContext context) =>
-           DoctorArticls(),
-      );
-      Navigator.of(context).push(route);
+      var route =Navigator.pop(_scaffoldState.currentState.context);
     } 
   }
 

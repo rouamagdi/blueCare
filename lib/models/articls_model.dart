@@ -10,14 +10,7 @@ class Articls {
  Client client = Client();
   Articls({this.id = 0, this.title, this.body });
 
-  Future<List<Articls>> getArticlss() async {
-    final response = await client.get("$articlsUrl");
-    if (response.statusCode == 200) {
-      return articlsFromJson(response.body);
-    } else {
-      return null;
-    }
-  }
+  
 
   factory Articls.fromJson(Map<String, dynamic> map) {
     return Articls(
@@ -32,6 +25,8 @@ class Articls {
   String toString() {
     return 'id: $id, name: $title, email: $body,';
   }
+
+  getArticls() {}
 
 }
 

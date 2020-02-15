@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:loginn/ui/doctor_profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class EditDoctorProfile extends StatefulWidget {
   @override
   _EditDoctorProfileState createState() => _EditDoctorProfileState();
@@ -782,10 +783,13 @@ _imageFile.then((file) async {
 
    void doctorEditProfile(BuildContext context) async {
     //post body
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var preftoken = prefs.getString('token');
+  print(preftoken);
     dynamic bodyToSend = {
       //'avatar': _image != null ? 'data:image/png;base64,' +  base64Encode(_image.readAsBytesSync()) : '',
       'name':_doctorName.text,};
-    dynamic headers = {'Content-Type': 'application/json'};
+    dynamic headers = {'Content-Type': 'application/json','Accept': 'application/json','Authorization': 'Bearer $preftoken'};
     var body = json.encode(bodyToSend);
     print(body);
     //request

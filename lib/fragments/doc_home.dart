@@ -9,10 +9,10 @@ import 'package:loginn/ui/chat_home.dart';
 import 'package:loginn/ui/notifications.dart';
 
 class DocHome extends StatefulWidget {
-   final ResponseBody response;
+  
 
   //in the constructor, require a Response
-  DocHome({Key key, @required this.response}) : super(key: key);
+ 
 
   
   @override

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:loginn/components/doc_request.dart';
 import'package:loginn/components/consult.dart';
-import 'package:loginn/components/articls.dart';
+import 'package:loginn/components/all_articls.dart';
 
 import 'package:loginn/components/research.dart';
 class ConsultencyFragment extends StatefulWidget {
@@ -133,7 +133,7 @@ class _ConsultencyFragmentState extends State<ConsultencyFragment>  with TickerP
                   ),
           onTap: () {
             Navigator.pushReplacement(context,
-        new MaterialPageRoute(builder: (BuildContext context) => Articls()));
+        new MaterialPageRoute(builder: (BuildContext context) => AllArticls()));
           },),],
         );
                       }

@@ -14,9 +14,7 @@ import 'notifications.dart';
 
 
 class DoctorPage extends StatefulWidget {
-   final ResponseBody response;
 
-   DoctorPage({Key key,  @required this.response}) : super(key: key);
   @override
   _DoctorPageState createState() => _DoctorPageState();
 }
